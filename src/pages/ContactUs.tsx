@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../firebase';
-import { Mail, Send, Loader2, Sparkles, CheckCircle2, Leaf, Phone, MapPin } from 'lucide-react';
+import { Mail, Send, Loader2, CheckCircle2, Leaf, Phone, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSettings } from '../components/SettingsContext';
 
 export default function ContactUs() {
+  const { settings } = useSettings();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -68,11 +70,11 @@ export default function ContactUs() {
             to="/" 
             className="text-[#99f6e4] hover:text-emerald-300 font-bold text-[10px] uppercase tracking-widest font-mono mb-2 inline-block transition-colors"
           >
-            ← Back to Portal Core
+            ← Back to Home
           </Link>
           <h1 className="font-serif text-3xl sm:text-5xl text-white font-normal tracking-tight">Contact Portal Support</h1>
-          <p className="text-emerald-100/50 text-sm mt-3 max-w-xl mx-auto leading-relaxed font-light">
-            Submit a direct curriculum request, request a rare botanical taxonomy key, or file bug reports with the department curators.
+          <p className="text-emerald-100/50 text-sm mt-3 max-w-xl mx-auto leading-relaxed font-light whitespace-pre-wrap">
+            {settings.contactText}
           </p>
         </div>
       </section>
@@ -97,7 +99,7 @@ export default function ContactUs() {
                   <Mail className="h-5 w-5 text-emerald-400 mt-0.5 shrink-0" />
                   <div>
                     <strong className="block text-white font-serif text-sm font-medium">Head Curator Email</strong>
-                    <span className="text-emerald-300 font-mono">mahfujar003@gmail.com</span>
+                    <span className="text-emerald-300 font-mono select-all">{settings.contactEmail}</span>
                   </div>
                 </div>
 
@@ -105,15 +107,15 @@ export default function ContactUs() {
                   <Phone className="h-5 w-5 text-emerald-400 mt-0.5 shrink-0" />
                   <div>
                     <strong className="block text-white font-serif text-sm font-medium">Lab Support Desk</strong>
-                    <span className="text-emerald-300 font-mono">+880 1700-000000</span>
+                    <span className="text-emerald-300 font-mono select-all">{settings.contactPhone}</span>
                   </div>
                 </div>
 
                 <div className="flex gap-4 items-start">
                   <MapPin className="h-5 w-5 text-emerald-400 mt-0.5 shrink-0" />
                   <div>
-                    <strong className="block text-white font-serif text-sm font-medium">Anatomy Labs</strong>
-                    <span className="text-emerald-100/60 leading-relaxed font-light">Section B, Dept. of Botany, National University</span>
+                    <strong className="block text-white font-serif text-sm font-medium">Research Address</strong>
+                    <span className="text-emerald-100/60 leading-relaxed font-light">{settings.contactAddress}</span>
                   </div>
                 </div>
               </div>

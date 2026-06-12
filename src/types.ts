@@ -18,3 +18,13 @@ export interface ContactQuery {
   message: string;
   createdAt: any;
 }
+
+export interface PortalSettings {
+  appName: string;
+  aboutText: string;
+  contactText: string;
+  contactEmail: string;
+  contactPhone: string;
+  contactAddress: string;
+}
+

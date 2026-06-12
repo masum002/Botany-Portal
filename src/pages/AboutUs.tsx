@@ -1,7 +1,10 @@
-import { Leaf, GraduationCap, Globe, BookOpen, Compass, Award } from 'lucide-react';
+import { Leaf, GraduationCap, BookOpen, Compass, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSettings } from '../components/SettingsContext';
 
 export default function AboutUs() {
+  const { settings } = useSettings();
+
   return (
     <div className="min-h-screen bg-[#041210] text-[#e5e7eb] pb-24">
       {/* Intro Hero banner */}
@@ -12,9 +15,9 @@ export default function AboutUs() {
             to="/" 
             className="text-[#99f6e4] hover:text-emerald-300 font-bold text-[10px] uppercase tracking-widest font-mono mb-2 inline-block transition-colors"
           >
-            ← Back to Portal Core
+            ← Back to Home
           </Link>
-          <h1 className="font-serif text-3xl sm:text-5xl text-white font-normal tracking-tight">About Botany Honors</h1>
+          <h1 className="font-serif text-3xl sm:text-5xl text-white font-normal tracking-tight uppercase">About {settings.appName}</h1>
           <p className="text-emerald-100/50 mt-4 max-w-xl mx-auto leading-relaxed text-sm font-light">
             Pioneering digital curriculum organization, systematic plant mapping, and secure scholarly document archives.
           </p>
@@ -22,7 +25,7 @@ export default function AboutUs() {
       </section>
 
       {/* Main Content Area */}
-      <section className="max-w-4xl mx-auto px-4 mt-10 leading-relaxed space-y-16">
+      <section className="max-w-4xl mx-auto px-4 mt-6 leading-relaxed space-y-16">
         
         {/* Mission Statement */}
         <div className="p-8 sm:p-12 bg-[#102a23]/30 rounded-2xl border border-emerald-400/10 flex flex-col md:flex-row gap-8 items-center">
@@ -30,9 +33,9 @@ export default function AboutUs() {
             <GraduationCap className="h-10 w-10" />
           </div>
           <div className="space-y-3">
-            <h2 className="font-serif text-2xl text-white">Supporting Noble Botany Scholars</h2>
-            <p className="text-emerald-100/60 text-sm leading-relaxed font-light">
-              Botany Honors is a specialized digital academic resource portal curated specifically to consolidate high-level curricula and research references for Botany scholars. Botany honors study comprises advanced biological disciplines — ranging from microbiology, genetics, tissue cultivation, to cellular taxonomy — often requiring rare reference texts. This site bridges the availability gap.
+            <h2 className="font-serif text-2xl text-white">Academy & Curricular Framework</h2>
+            <p className="text-emerald-100/60 text-sm leading-relaxed font-light whitespace-pre-wrap">
+              {settings.aboutText}
             </p>
           </div>
         </div>
@@ -55,7 +58,7 @@ export default function AboutUs() {
             </div>
             <h3 className="font-serif text-lg text-white">OneDrive Mapping</h3>
             <p className="text-emerald-100/40 text-xs leading-relaxed font-light">
-              Consolidated cloud storage organization linked securely via backend route masking to guard intellectual assets.
+              Consolidated cloud storage organization linked securely straight from the curator's library databases.
             </p>
           </div>
 
@@ -72,7 +75,7 @@ export default function AboutUs() {
 
         {/* Academic Note */}
         <div className="border-l-2 border-emerald-500 pl-6 space-y-3">
-          <h3 className="font-serif text-lg text-white">Curator's Scientific Note</h3>
+          <h3 className="font-serif text-lg text-white">Scientific Curation Protocol</h3>
           <p className="text-emerald-100/70 text-sm leading-relaxed italic font-light">
             "Plant biology dictates the core of earthly biosphere dynamics. Understanding the physiology, cellular structures, environmental behavior, and global systematics of flora is critical for modern agricultural resilience and climate management. This platform ensures that honors students have immediate, uninterrupted, and secure access to required literature."
           </p>

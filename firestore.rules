@@ -2,23 +2,16 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Global Safety Net
-    match /{document=**} {
-      allow read, write: if false;
-    }
-
     // Secure Admin Identifier
     function isAdmin() {
       return request.auth != null &&
-             request.auth.token.email == "mahfujar003@gmail.com" &&
-             request.auth.token.email_verified == true;
+             request.auth.token.email == "mahfujar003@gmail.com";
     }
 
     // Books Collection Rules
     match /books/{bookId} {
-      allow read, list: if true; // Botany students reading textbooks is publicly acceptable
-      allow create: if isAdmin() && isValidBook(request.resource.data);
-      allow update: if isAdmin() && isValidBook(request.resource.data);
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidBook(request.resource.data);
       allow delete: if isAdmin();
     }
 
@@ -31,8 +24,14 @@ service cloud.firestore {
 
     // Queries Collection Rules
     match /queries/{queryId} {
-      allow read, list, delete: if isAdmin();
+      allow read, delete: if isAdmin();
       allow create: if isValidQuery(request.resource.data);
+    }
+
+    // Settings Collection Rules
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     function isValidQuery(data) {

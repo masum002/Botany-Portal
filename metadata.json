@@ -1,6 +1,6 @@
 {
-  "name": "Botany Honors Portal",
-  "description": "An elite educational catalog and safe book reader for Botany honors undergraduate students",
+  "name": "Botany Web Portal",
+  "description": "Secure reference catalog for Botany honors undergraduate students designed to easily map and access curriculum literature.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

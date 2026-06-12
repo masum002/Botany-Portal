@@ -4,10 +4,12 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { Book } from '../types';
 import { BookOpen, ArrowLeft, Loader2, Sparkles, AlertCircle, FileText } from 'lucide-react';
+import { useSettings } from '../components/SettingsContext';
 
 export default function YearPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { settings } = useSettings();
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -72,7 +74,7 @@ export default function YearPage() {
             className="inline-flex items-center gap-1.5 text-[#99f6e4] hover:text-emerald-300 font-bold text-[10px] uppercase tracking-widest font-mono mb-2 transition-colors"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Back to Honors Portal</span>
+            <span>হোম ড্যাশবোর্ড</span>
           </Link>
           <h1 className="font-serif text-3xl sm:text-5xl text-white font-normal tracking-tight">{currentYearInfo.title}</h1>
           <p className="text-emerald-100/50 text-sm max-w-2xl mx-auto leading-relaxed font-light">{currentYearInfo.desc}</p>
@@ -96,7 +98,8 @@ export default function YearPage() {
               {books.map((book) => (
                 <div
                   key={book.id}
-                  className="bg-[#102a23]/20 rounded-2xl border border-emerald-400/10 hover:border-emerald-400/30 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group h-full"
+                  onClick={() => window.open(book.oneDriveLink, '_blank')}
+                  className="bg-[#102a23]/20 rounded-2xl border border-emerald-400/10 hover:border-emerald-400/30 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group h-full cursor-pointer"
                 >
                   <div className="p-6 flex-1 flex flex-col justify-start">
                     {/* Cover art/placeholder */}
@@ -129,14 +132,16 @@ export default function YearPage() {
                     </h3>
                   </div>
 
-                  <div className="px-6 pb-6 pt-2">
-                    <button
-                      onClick={() => navigate(`/view/${book.id}`)}
+                  <div className="px-6 pb-6 pt-2" onClick={(e) => e.stopPropagation()}>
+                    <a
+                      href={book.oneDriveLink}
+                      target="_blank"
+                      rel="noreferrer"
                       className="w-full inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold py-3 px-4 rounded-xl transition-all cursor-pointer shadow-lg hover:shadow-emerald-500/10 text-xs uppercase tracking-widest"
                     >
                       <BookOpen className="h-4 w-4 text-emerald-950" />
                       <span>Review Textbook</span>
-                    </button>
+                    </a>
                   </div>
                 </div>
               ))}

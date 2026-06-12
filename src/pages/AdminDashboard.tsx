@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { collection, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp, setDoc, query, orderBy } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from '../firebase';
 import { Book, ContactQuery } from '../types';
-import { Shield, LayoutGrid, CheckSquare, PlusCircle, Trash, Loader2, LogOut, ArrowLeft, ShieldAlert, Library, MessageSquareCode, Sparkles, Plus, AlertCircle, Trash2 } from 'lucide-react';
+import { Shield, LayoutGrid, CheckSquare, PlusCircle, Trash, Loader2, LogOut, ArrowLeft, ShieldAlert, Library, MessageSquareCode, Sparkles, Plus, AlertCircle, Trash2, Settings } from 'lucide-react';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export default function AdminDashboard() {
   const [queries, setQueries] = useState<ContactQuery[]>([]);
   const [loadingQueries, setLoadingQueries] = useState(true);
 
-  // Form inputs
+  // Form inputs for Cataloging Books
   const [newTitle, setNewTitle] = useState('');
   const [newYear, setNewYear] = useState<'1st-year' | '2nd-year' | '3rd-year' | '4th-year'>('1st-year');
   const [newOneDriveLink, setNewOneDriveLink] = useState('');
@@ -28,7 +28,17 @@ export default function AdminDashboard() {
   const [formMsgText, setFormMsgText] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Tab switching state
-  const [activeTab, setActiveTab] = useState<'books' | 'queries'>('books');
+  const [activeTab, setActiveTab] = useState<'books' | 'queries' | 'settings'>('books');
+
+  // Configuration Settings States
+  const [appName, setAppName] = useState('Botany Web Portal');
+  const [aboutText, setAboutText] = useState('');
+  const [contactText, setContactText] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
+  const [contactAddress, setContactAddress] = useState('');
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [settingsMsg, setSettingsMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Verify Admin Authentication State
   useEffect(() => {
@@ -83,6 +93,24 @@ export default function AdminDashboard() {
     return unsubscribe;
   }, [currentUser]);
 
+  // Fetch existing portal settings
+  useEffect(() => {
+    if (!currentUser) return;
+    const docRef = doc(db, 'settings', 'general');
+    const unsubscribe = onSnapshot(docRef, (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        setAppName(data.appName || 'Botany Web Portal');
+        setAboutText(data.aboutText || '');
+        setContactText(data.contactText || '');
+        setContactEmail(data.contactEmail || 'mahfujar003@gmail.com');
+        setContactPhone(data.contactPhone || '+880 1700-000000');
+        setContactAddress(data.contactAddress || 'Department of Botany, Honors Division');
+      }
+    });
+    return unsubscribe;
+  }, [currentUser]);
+
   // Handle adding a book
   const handleAddBookSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,6 +155,31 @@ export default function AdminDashboard() {
     } catch (err) {
       alert("Unauthorized key operation or network leak faulted action.");
       handleFirestoreError(err, OperationType.DELETE, `${targetCollection}/${bookId}`);
+    }
+  };
+
+  // Save Settings back to Firestore
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSettingsLoading(true);
+    setSettingsMsg(null);
+
+    try {
+      await setDoc(doc(db, 'settings', 'general'), {
+        appName: appName.trim(),
+        aboutText: aboutText.trim(),
+        contactText: contactText.trim(),
+        contactEmail: contactEmail.trim(),
+        contactPhone: contactPhone.trim(),
+        contactAddress: contactAddress.trim(),
+        updatedAt: serverTimestamp(),
+      });
+      setSettingsMsg({ type: 'success', text: 'Portal settings synchronized successfully!' });
+    } catch (err: any) {
+      console.error(err);
+      setSettingsMsg({ type: 'error', text: `Failed to save dynamic configuration: ${err.message}` });
+    } finally {
+      setSettingsLoading(false);
     }
   };
 
@@ -190,7 +243,7 @@ export default function AdminDashboard() {
             <div>
               <h1 className="font-serif text-2xl sm:text-3xl font-normal text-white flex items-center gap-3">
                 <span>Curator Desk</span>
-                <span className="text-[9px] font-mono font-bold bg-emerald-950/80 px-2   tracking-wider py-0.5 rounded-full border border-emerald-500/10">ROOT AUTHOR</span>
+                <span className="text-[9px] font-mono font-bold bg-emerald-950/80 px-2 tracking-wider py-0.5 rounded-full border border-emerald-500/10">ROOT AUTHOR</span>
               </h1>
               <p className="text-[10px] text-emerald-300 font-mono tracking-wide mt-0.5">Primary Session: mahfujar003@gmail.com</p>
             </div>
@@ -246,14 +299,14 @@ export default function AdminDashboard() {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Col: cataloger input form */}
-        <div className="lg:col-span-5 h-fit">
+        <div className="lg:col-span-5 h-fit text-left">
           <form onSubmit={handleAddBookSubmit} className="bg-[#102a23]/20 border rounded-2xl border-emerald-400/10 p-6 sm:p-8 space-y-6">
             <div>
               <h2 className="font-serif text-xl font-normal text-white flex items-center gap-2">
                 <PlusCircle className="h-5 w-5 text-emerald-400" />
                 <span>Catalog Textbook</span>
               </h2>
-              <p className="text-xs text-emerald-100/30 mt-1 font-light leading-relaxed">Submit OneDrive links which are converted server-side into masked streams.</p>
+              <p className="text-xs text-emerald-100/30 mt-1 font-light leading-relaxed">Submit OneDrive links which open straight for honors students.</p>
             </div>
 
             {formMsgText && (
@@ -267,7 +320,7 @@ export default function AdminDashboard() {
             )}
 
             <div className="space-y-2">
-              <label htmlFor="book-title" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block">Textbook Title</label>
+              <label htmlFor="book-title" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Textbook Title</label>
               <input
                 id="book-title"
                 required
@@ -280,7 +333,7 @@ export default function AdminDashboard() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="book-year" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block">Curriculum Honor stage</label>
+              <label htmlFor="book-year" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Curriculum Honor stage</label>
               <select
                 id="book-year"
                 required
@@ -296,7 +349,7 @@ export default function AdminDashboard() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="book-onedrive" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block">OneDrive sharing URL</label>
+              <label htmlFor="book-onedrive" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">OneDrive sharing URL</label>
               <input
                 id="book-onedrive"
                 required
@@ -306,11 +359,11 @@ export default function AdminDashboard() {
                 placeholder="e.g. https://1drv.ms/b/s!AnH_f_08D8"
                 className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none placeholder-emerald-100/10 focus:bg-slate-950 text-white"
               />
-              <span className="text-[9px] text-emerald-100/20 block font-light leading-relaxed">Provide standard OneDrive sharing links. They are masked before delivery.</span>
+              <span className="text-[9px] text-emerald-100/20 block font-light leading-relaxed">Provide standard OneDrive sharing links. Students are redirected directly to this link.</span>
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="book-cover" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block">Book Cover URL (Optional)</label>
+              <label htmlFor="book-cover" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Book Cover URL (Optional)</label>
               <input
                 id="book-cover"
                 type="url"
@@ -341,11 +394,11 @@ export default function AdminDashboard() {
           </form>
         </div>
 
-        {/* Right Col: catalog display or inquiries list based on tabs */}
-        <div className="lg:col-span-7">
+        {/* Right Col: catalog display, support logs, or settings fields */}
+        <div className="lg:col-span-7 text-left">
           
           {/* Tabs header view */}
-          <div className="flex border-b border-emerald-950/40 mb-6 gap-6">
+          <div className="flex border-b border-emerald-950/40 mb-6 gap-6 flex-wrap">
             <button
               onClick={() => setActiveTab('books')}
               className={`pb-4 px-1 text-xs uppercase tracking-widest font-bold border-b-2 transition-colors cursor-pointer ${
@@ -354,7 +407,7 @@ export default function AdminDashboard() {
                   : 'border-transparent text-emerald-100/30 hover:text-white'
               }`}
             >
-              Catalog {books.length}
+              Catalog ({books.length})
             </button>
             <button
               onClick={() => setActiveTab('queries')}
@@ -364,13 +417,23 @@ export default function AdminDashboard() {
                   : 'border-transparent text-emerald-100/30 hover:text-white'
               }`}
             >
-              Support Queries {queries.length}
+              Queries ({queries.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`pb-4 px-1 text-xs uppercase tracking-widest font-bold border-b-2 transition-colors cursor-pointer ${
+                activeTab === 'settings' 
+                  ? 'border-emerald-400 text-emerald-400' 
+                  : 'border-transparent text-emerald-100/30 hover:text-white'
+              }`}
+            >
+              Portal Settings
             </button>
           </div>
 
           {/* Tab Content Display */}
-          {activeTab === 'books' ? (
-            <div className="space-y-4">
+          {activeTab === 'books' && (
+            <div className="space-y-4 text-left">
               {loadingBooks ? (
                 <div className="py-20 flex flex-col items-center justify-center text-emerald-100/30 space-y-3">
                   <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
@@ -381,7 +444,7 @@ export default function AdminDashboard() {
                   {books.map((b) => (
                     <div
                       key={b.id}
-                      className="bg-[#102a23]/10 border border-emerald-400/10 p-4 rounded-xl flex items-center justify-between gap-4 group hover:border-emerald-400/20 transition-all"
+                      className="bg-[#102a23]/10 border border-emerald-400/10 p-4 rounded-xl flex items-center justify-between gap-4 group hover:border-emerald-400/20 transition-all text-left"
                     >
                       <div className="truncate flex-1 min-w-0">
                         <strong className="text-white text-sm font-serif font-normal tracking-tight truncate block group-hover:text-[#99f6e4] transition-colors">{b.title}</strong>
@@ -389,13 +452,13 @@ export default function AdminDashboard() {
                           <span className="text-[9px] font-mono font-bold bg-[#041210] border border-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
                             {b.year.replace('-', ' ')}
                           </span>
-                          <span className="text-[9px] text-[#99f6e4]/43 font-mono truncate max-w-[160px] sm:max-w-xs">{b.oneDriveLink}</span>
+                          <span className="text-[9px] text-[#99f6e4]/40 font-mono truncate max-w-[160px] sm:max-w-xs">{b.oneDriveLink}</span>
                         </div>
                       </div>
 
                       <button
                         onClick={() => handleDeleteBook(b.id)}
-                        className="p-3 bg-rose-950/20 hover:bg-rose-950 border border-rose-500/10 rounded-lg text-rose-400 hover:text-rose-200 transition-all cursor-pointer"
+                        className="p-3 bg-rose-950/20 hover:bg-rose-950 border border-rose-500/10 rounded-lg text-rose-400 hover:text-rose-200 transition-all cursor-pointer shrink-0"
                         title="Delete this book"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -411,8 +474,10 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
-          ) : (
-            <div className="space-y-4">
+          )}
+
+          {activeTab === 'queries' && (
+            <div className="space-y-4 text-left">
               {loadingQueries ? (
                 <div className="py-20 flex flex-col items-center justify-center text-emerald-100/30 space-y-3">
                   <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
@@ -423,12 +488,12 @@ export default function AdminDashboard() {
                   {queries.map((q) => (
                     <div
                       key={q.id}
-                      className="bg-[#102a23]/10 border border-emerald-400/10 p-5 rounded-xl space-y-3 hover:border-emerald-400/25 transition-all"
+                      className="bg-[#102a23]/10 border border-emerald-400/10 p-5 rounded-xl space-y-3 hover:border-emerald-400/25 transition-all text-left"
                     >
-                      <div className="flex items-start justify-between flex-wrap gap-2 pb-2.5 border-b border-emerald-500/10">
+                      <div className="flex items-start justify-between flex-wrap gap-2 pb-2.5 border-b border-emerald-500/10 text-left">
                         <div>
                           <strong className="text-sm text-white block">{q.name}</strong>
-                          <span className="text-xs text-emerald-400 font-mono">{q.email}</span>
+                          <span className="text-xs text-emerald-400 font-mono select-all">{q.email}</span>
                         </div>
                         {q.createdAt?.seconds && (
                           <span className="text-[9px] font-mono text-emerald-100/30 bg-[#041210] px-2 py-1 border border-emerald-950 rounded uppercase tracking-wider">
@@ -436,7 +501,7 @@ export default function AdminDashboard() {
                           </span>
                         )}
                       </div>
-                      <p className="text-emerald-100/50 text-xs sm:text-sm whitespace-pre-wrap leading-relaxed font-light">
+                      <p className="text-emerald-100/50 text-xs sm:text-sm whitespace-pre-wrap leading-relaxed font-light select-text">
                         {q.message}
                       </p>
                     </div>
@@ -450,6 +515,123 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
+          )}
+
+          {activeTab === 'settings' && (
+            <form onSubmit={handleSaveSettings} className="bg-[#102a23]/20 border rounded-2xl border-emerald-400/10 p-6 sm:p-8 space-y-6 text-left">
+              <div>
+                <h2 className="font-serif text-xl font-normal text-white flex items-center gap-2">
+                  <Settings className="h-5 w-5 text-emerald-400" />
+                  <span>Portal Configuration</span>
+                </h2>
+                <p className="text-xs text-emerald-100/30 mt-1 font-light leading-relaxed">Customize app identity, about details, and support directory lines instantly.</p>
+              </div>
+
+              {settingsMsg && (
+                <div className={`p-4 rounded-xl text-xs font-light border ${
+                  settingsMsg.type === 'success' 
+                    ? 'border-emerald-500/20 bg-emerald-950/30 text-emerald-400' 
+                    : 'border-rose-500/20 bg-rose-950/30 text-rose-300'
+                }`}>
+                  {settingsMsg.text}
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <label htmlFor="portal-appname" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Website Brand Name</label>
+                <input
+                  id="portal-appname"
+                  required
+                  type="text"
+                  value={appName}
+                  onChange={(e) => setAppName(e.target.value)}
+                  placeholder="e.g. Botany Web Portal"
+                  className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="portal-about" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">About Us Section Content</label>
+                <textarea
+                  id="portal-about"
+                  required
+                  rows={5}
+                  value={aboutText}
+                  onChange={(e) => setAboutText(e.target.value)}
+                  placeholder="Describe your portal mission and program details..."
+                  className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white leading-relaxed"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="portal-contact-text" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Contact Panel Description Header</label>
+                <textarea
+                  id="portal-contact-text"
+                  required
+                  rows={3}
+                  value={contactText}
+                  onChange={(e) => setContactText(e.target.value)}
+                  placeholder="e.g. Submit a direct textbook request if you experience download or view issues..."
+                  className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white leading-relaxed"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="portal-email" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Support Directory Email Address</label>
+                  <input
+                    id="portal-email"
+                    required
+                    type="email"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    placeholder="e.g. mahfujar003@gmail.com"
+                    className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="portal-phone" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Department Phone / Hotline</label>
+                  <input
+                    id="portal-phone"
+                    required
+                    type="text"
+                    value={contactPhone}
+                    onChange={(e) => setContactPhone(e.target.value)}
+                    placeholder="e.g. +880 1700-000000"
+                    className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="portal-address" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Department Laboratory / Research Address</label>
+                <input
+                  id="portal-address"
+                  required
+                  type="text"
+                  value={contactAddress}
+                  onChange={(e) => setContactAddress(e.target.value)}
+                  placeholder="e.g. Department of Botany, Honors Division, National University"
+                  className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={settingsLoading}
+                className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:bg-[#102a23]/30 disabled:text-emerald-300 font-bold text-emerald-950 py-3.5 px-4 rounded-xl text-xs uppercase tracking-widest transition-all focus:outline-none cursor-pointer flex items-center justify-center gap-2 shadow-lg"
+              >
+                {settingsLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin text-emerald-950" />
+                    <span>Synchronizing Server Configuration...</span>
+                  </>
+                ) : (
+                  <span>Save Portal Settings</span>
+                )}
+              </button>
+            </form>
           )}
 
         </div>

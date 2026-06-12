@@ -1,6 +1,8 @@
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import FallingLeaves from './components/FallingLeaves';
+import { SettingsProvider } from './components/SettingsContext';
 
 // Pages import
 import Home from './pages/Home';
@@ -20,10 +22,13 @@ function LayoutWrapper() {
   const isAdminZone = location.pathname.startsWith('/admin-dashboard') || location.pathname.startsWith('/admin-login');
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#041210] text-[#e5e7eb] font-sans antialiased">
+    <div className="flex flex-col min-h-screen bg-[#020a08] text-[#e5e7eb] font-sans antialiased relative overflow-hidden">
+      {/* Dynamic Falling Botanical Leaves Backdrop */}
+      <FallingLeaves />
+      
       {!isReaderView && !isAdminZone && <Header />}
       
-      <main className="flex-grow">
+      <main className="flex-grow relative z-10">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/year/:id" element={<YearPage />} />
@@ -43,7 +48,9 @@ function LayoutWrapper() {
 export default function App() {
   return (
     <Router>
-      <LayoutWrapper />
+      <SettingsProvider>
+        <LayoutWrapper />
+      </SettingsProvider>
     </Router>
   );
 }

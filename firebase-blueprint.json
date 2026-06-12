@@ -1,0 +1,40 @@
+{
+  "entities": {
+    "book": {
+      "title": "Book",
+      "description": "Botany textbook metadata and safe pointer to OneDrive URL",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "year": { "type": "string", "enum": ["1st-year", "2nd-year", "3rd-year", "4th-year"] },
+        "oneDriveLink": { "type": "string" },
+        "coverUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "year", "oneDriveLink"]
+    },
+    "contactQuery": {
+      "title": "Contact Query",
+      "description": "Contact form submission from a student",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "message": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "message"]
+    }
+  },
+  "firestore": {
+    "/books/{bookId}": {
+      "schema": "book",
+      "description": "Collection of botany books cataloged by year"
+    },
+    "/queries/{queryId}": {
+      "schema": "contactQuery",
+      "description": "Collection of incoming support or inquiry queries from students or visitors"
+    }
+  }
+}

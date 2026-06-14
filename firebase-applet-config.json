@@ -1,10 +1,10 @@
 {
-  "projectId": "genial-parser-g6tp2",
-  "appId": "1:618539864809:web:0ca11b242b91aa65e11678",
-  "apiKey": "AIzaSyC9ZtpXbUzIiFBejJ1Ja7TcH4j3UbeIZi0",
-  "authDomain": "genial-parser-g6tp2.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-2410b553-e23f-4ec6-9814-5038bd7e6287",
-  "storageBucket": "genial-parser-g6tp2.firebasestorage.app",
-  "messagingSenderId": "618539864809",
-  "measurementId": ""
+  "projectId": "botany-b67a6",
+  "appId": "1:944941992008:web:5ee0ddf794bd7ba712b07d",
+  "apiKey": "AIzaSyCfAVydDjPqD_7cv3MegIDcaJ5p4eaoJKI",
+  "authDomain": "botany-b67a6.firebaseapp.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "botany-b67a6.firebasestorage.app",
+  "messagingSenderId": "944941992008",
+  "measurementId": "G-R3JMF6V0DM"
 }

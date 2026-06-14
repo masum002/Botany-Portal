@@ -7,3 +7,31 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
+@keyframes light-beam {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50% { opacity: 0.9; transform: scaleY(1.15) skewX(2deg); }
+}
+
+@keyframes laser-scan {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+
+@keyframes heartbeat-pulse {
+  0%, 100% { transform: scale(1) rotate(-45deg); opacity: 0.8; }
+  50% { transform: scale(1.2) rotate(-45deg); opacity: 1; filter: drop-shadow(0 0 8px #34d399); }
+}
+
+.animate-light-beam {
+  animation: light-beam 2.5s ease-in-out infinite;
+}
+
+.animate-laser-scan {
+  animation: laser-scan 4s linear infinite;
+}
+
+.animate-heartbeat-pulse {
+  animation: heartbeat-pulse 1.2s ease-in-out infinite;
+}
+
+

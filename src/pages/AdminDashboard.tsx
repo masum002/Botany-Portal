@@ -37,6 +37,13 @@ export default function AdminDashboard() {
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [contactAddress, setContactAddress] = useState('');
+  const [developerPhotoUrl, setDeveloperPhotoUrl] = useState('');
+  const [developerName, setDeveloperName] = useState('');
+  const [developerTitle, setDeveloperTitle] = useState('');
+  const [developerDescription, setDeveloperDescription] = useState('');
+  const [aboutDetailed, setAboutDetailed] = useState('');
+  const [adminWhatsApp, setAdminWhatsApp] = useState('');
+  const [developerFacebook, setDeveloperFacebook] = useState('');
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsMsg, setSettingsMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -106,6 +113,13 @@ export default function AdminDashboard() {
         setContactEmail(data.contactEmail || 'mahfujar003@gmail.com');
         setContactPhone(data.contactPhone || '+880 1700-000000');
         setContactAddress(data.contactAddress || 'Department of Botany, Honors Division');
+        setDeveloperPhotoUrl(data.developerPhotoUrl || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=facearea&facepad=3&w=400&h=400&q=80');
+        setDeveloperName(data.developerName || 'Professor Mahfujur Rahman');
+        setDeveloperTitle(data.developerTitle || 'Lead Department Curator & Chief Developer');
+        setDeveloperDescription(data.developerDescription || 'Empowering honors research scholars by modernizing access to botany literature and botanical mapping databases.');
+        setAboutDetailed(data.aboutDetailed || 'Prof. Mahfujur Rahman is a visionary botany academician and systems engineer. Combining rigorous academic botanical standards with modern cloud-enabled architectures, this portal eliminates barriers to literature. Key plant phylum classifications, cytogenetic manuals, plant tissue culture logs, and environmental research are cataloged in real-time for immediate download.');
+        setAdminWhatsApp(data.adminWhatsApp || '+880 1700-000000');
+        setDeveloperFacebook(data.developerFacebook || 'https://facebook.com');
       }
     });
     return unsubscribe;
@@ -172,6 +186,13 @@ export default function AdminDashboard() {
         contactEmail: contactEmail.trim(),
         contactPhone: contactPhone.trim(),
         contactAddress: contactAddress.trim(),
+        developerPhotoUrl: developerPhotoUrl.trim(),
+        developerName: developerName.trim(),
+        developerTitle: developerTitle.trim(),
+        developerDescription: developerDescription.trim(),
+        aboutDetailed: aboutDetailed.trim(),
+        adminWhatsApp: adminWhatsApp.trim(),
+        developerFacebook: developerFacebook.trim(),
         updatedAt: serverTimestamp(),
       });
       setSettingsMsg({ type: 'success', text: 'Portal settings synchronized successfully!' });
@@ -537,84 +558,200 @@ export default function AdminDashboard() {
                 </div>
               )}
 
-              <div className="space-y-2">
-                <label htmlFor="portal-appname" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Website Brand Name</label>
-                <input
-                  id="portal-appname"
-                  required
-                  type="text"
-                  value={appName}
-                  onChange={(e) => setAppName(e.target.value)}
-                  placeholder="e.g. Botany Web Portal"
-                  className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="portal-about" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">About Us Section Content</label>
-                <textarea
-                  id="portal-about"
-                  required
-                  rows={5}
-                  value={aboutText}
-                  onChange={(e) => setAboutText(e.target.value)}
-                  placeholder="Describe your portal mission and program details..."
-                  className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white leading-relaxed"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="portal-contact-text" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Contact Panel Description Header</label>
-                <textarea
-                  id="portal-contact-text"
-                  required
-                  rows={3}
-                  value={contactText}
-                  onChange={(e) => setContactText(e.target.value)}
-                  placeholder="e.g. Submit a direct textbook request if you experience download or view issues..."
-                  className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white leading-relaxed"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* SECTION A: General Portal Info */}
+              <div className="space-y-4 bg-emerald-950/20 p-5 rounded-2xl border border-emerald-500/10">
+                <h3 className="text-xs uppercase font-mono font-bold text-emerald-400 tracking-widest border-b border-emerald-500/10 pb-2">Part I: Academy Brand Details</h3>
+                
                 <div className="space-y-2">
-                  <label htmlFor="portal-email" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Support Directory Email Address</label>
+                  <label htmlFor="portal-appname" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Website Brand Name</label>
                   <input
-                    id="portal-email"
-                    required
-                    type="email"
-                    value={contactEmail}
-                    onChange={(e) => setContactEmail(e.target.value)}
-                    placeholder="e.g. mahfujar003@gmail.com"
-                    className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="portal-phone" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Department Phone / Hotline</label>
-                  <input
-                    id="portal-phone"
+                    id="portal-appname"
                     required
                     type="text"
-                    value={contactPhone}
-                    onChange={(e) => setContactPhone(e.target.value)}
-                    placeholder="e.g. +880 1700-000000"
+                    value={appName}
+                    onChange={(e) => setAppName(e.target.value)}
+                    placeholder="e.g. Botany Web Portal"
                     className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="portal-about" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">General Framework Intro</label>
+                  <textarea
+                    id="portal-about"
+                    required
+                    rows={3}
+                    value={aboutText}
+                    onChange={(e) => setAboutText(e.target.value)}
+                    placeholder="Describe your portal mission and program details..."
+                    className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white leading-relaxed"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="portal-contact-text" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Contact Form Header Tip</label>
+                  <textarea
+                    id="portal-contact-text"
+                    required
+                    rows={2}
+                    value={contactText}
+                    onChange={(e) => setContactText(e.target.value)}
+                    placeholder="e.g. Submit a direct textbook request if you experience download or view issues..."
+                    className="w-full bg-[#041210]/60 border border-[#103a2c] focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white leading-relaxed"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="portal-address" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Department Laboratory / Research Address</label>
-                <input
-                  id="portal-address"
-                  required
-                  type="text"
-                  value={contactAddress}
-                  onChange={(e) => setContactAddress(e.target.value)}
-                  placeholder="e.g. Department of Botany, Honors Division, National University"
-                  className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
-                />
+              {/* SECTION B: Developer Photo & Stylish Texts */}
+              <div className="space-y-4 bg-emerald-950/20 p-5 rounded-2xl border border-emerald-500/10">
+                <h3 className="text-xs uppercase font-mono font-bold text-[#99f6e4] tracking-widest border-b border-emerald-500/10 pb-2">Part II: Developer Profile & Aesthetic Texts</h3>
+                
+                <div className="space-y-2">
+                  <label htmlFor="portal-dev-image" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Developer Photo URL (Stylish Square image)</label>
+                  <input
+                    id="portal-dev-image"
+                    required
+                    type="url"
+                    value={developerPhotoUrl}
+                    onChange={(e) => setDeveloperPhotoUrl(e.target.value)}
+                    placeholder="https://example.com/photo.jpg"
+                    className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
+                  />
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-[9px] text-emerald-100/30">Preview:</span>
+                    {developerPhotoUrl && (
+                      <img src={developerPhotoUrl} alt="Preview" className="h-6 w-6 rounded-md object-cover border border-emerald-500/20" referrerPolicy="no-referrer" />
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="portal-dev-name" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Developer Header Name</label>
+                    <input
+                      id="portal-dev-name"
+                      required
+                      type="text"
+                      value={developerName}
+                      onChange={(e) => setDeveloperName(e.target.value)}
+                      placeholder="e.g. Professor Mahfujur Rahman"
+                      className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="portal-dev-title" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Developer Work Title</label>
+                    <input
+                      id="portal-dev-title"
+                      required
+                      type="text"
+                      value={developerTitle}
+                      onChange={(e) => setDeveloperTitle(e.target.value)}
+                      placeholder="e.g. Lead Department Curator & Developer"
+                      className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="portal-dev-desc" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Developer Quote (Ultra Stylish Intro)</label>
+                  <textarea
+                    id="portal-dev-desc"
+                    required
+                    rows={2}
+                    value={developerDescription}
+                    onChange={(e) => setDeveloperDescription(e.target.value)}
+                    placeholder="Enter an ultra-stylish quote about your curriculum goal..."
+                    className="w-full bg-[#041210]/60 border border-[#103a2c] focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white leading-relaxed"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="portal-about-detailed" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Academic Bio Review (Detailed - Bistarito)</label>
+                  <textarea
+                    id="portal-about-detailed"
+                    required
+                    rows={5}
+                    value={aboutDetailed}
+                    onChange={(e) => setAboutDetailed(e.target.value)}
+                    placeholder="Enter detailed review text..."
+                    className="w-full bg-[#041210]/60 border border-[#103a2c] focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white leading-relaxed"
+                  />
+                </div>
+              </div>
+
+              {/* SECTION C: Support Line & Direct Instant Messaging Coordinates */}
+              <div className="space-y-4 bg-emerald-950/20 p-5 rounded-2xl border border-emerald-500/10">
+                <h3 className="text-xs uppercase font-mono font-bold text-emerald-400 tracking-widest border-b border-emerald-500/10 pb-2">Part III: Social Support Directory</h3>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="portal-email" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Support Directory Email (Gmail)</label>
+                    <input
+                      id="portal-email"
+                      required
+                      type="email"
+                      value={contactEmail}
+                      onChange={(e) => setContactEmail(e.target.value)}
+                      placeholder="e.g. mahfujar003@gmail.com"
+                      className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="portal-phone" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Coordinator Phone Line</label>
+                    <input
+                      id="portal-phone"
+                      required
+                      type="text"
+                      value={contactPhone}
+                      onChange={(e) => setContactPhone(e.target.value)}
+                      placeholder="e.g. +880 1700-000000"
+                      className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="portal-whatsapp" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Admin WhatsApp Number (Include +countrycode)</label>
+                    <input
+                      id="portal-whatsapp"
+                      required
+                      type="text"
+                      value={adminWhatsApp}
+                      onChange={(e) => setAdminWhatsApp(e.target.value)}
+                      placeholder="e.g. +8801700000000"
+                      className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="portal-facebook-url" className="text-[9px] font-bold font-mono text-emerald-400 uppercase tracking-widest block text-left">Admin Facebook Profile URL</label>
+                    <input
+                      id="portal-facebook-url"
+                      required
+                      type="url"
+                      value={developerFacebook}
+                      onChange={(e) => setDeveloperFacebook(e.target.value)}
+                      placeholder="e.g. https://facebook.com/username"
+                      className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="portal-address" className="text-[9px] font-bold font-mono text-[#99f6e4] uppercase tracking-widest block text-left">Physical Reference Address Location</label>
+                  <input
+                    id="portal-address"
+                    required
+                    type="text"
+                    value={contactAddress}
+                    onChange={(e) => setContactAddress(e.target.value)}
+                    placeholder="e.g. Department of Botany, Honors Division, National University"
+                    className="w-full bg-[#041210]/60 border border-emerald-400/10 focus:border-emerald-400/30 rounded-xl px-4 py-3 text-xs focus:outline-none focus:bg-slate-950 text-white"
+                  />
+                </div>
               </div>
 
               <button

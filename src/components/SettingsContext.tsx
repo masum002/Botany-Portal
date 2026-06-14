@@ -10,6 +10,13 @@ const defaultSettings: PortalSettings = {
   contactEmail: 'mahfujar003@gmail.com',
   contactPhone: '+880 1700-000000',
   contactAddress: 'Department of Botany, National University',
+  developerPhotoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=facearea&facepad=3&w=400&h=400&q=80',
+  developerName: 'Professor Mahfujur Rahman',
+  developerTitle: 'Lead Department Curator & Chief Developer',
+  developerDescription: 'Empowering honors research scholars by modernizing access to botany literature and botanical mapping databases.',
+  aboutDetailed: 'Prof. Mahfujur Rahman is a visionary botany academician and systems engineer. Combining rigorous academic botanical standards with modern cloud-enabled architectures, this portal eliminates barriers to literature. Key plant phylum classifications, cytogenetic manuals, plant tissue culture logs, and environmental research are cataloged in real-time for immediate download.',
+  adminWhatsApp: '+880 1700-000000',
+  developerFacebook: 'https://facebook.com',
 };
 
 const SettingsContext = createContext<{ settings: PortalSettings; loading: boolean }>({
@@ -34,6 +41,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           contactEmail: data.contactEmail || defaultSettings.contactEmail,
           contactPhone: data.contactPhone || defaultSettings.contactPhone,
           contactAddress: data.contactAddress || defaultSettings.contactAddress,
+          developerPhotoUrl: data.developerPhotoUrl || defaultSettings.developerPhotoUrl,
+          developerName: data.developerName || defaultSettings.developerName,
+          developerTitle: data.developerTitle || defaultSettings.developerTitle,
+          developerDescription: data.developerDescription || defaultSettings.developerDescription,
+          aboutDetailed: data.aboutDetailed || defaultSettings.aboutDetailed,
+          adminWhatsApp: data.adminWhatsApp || defaultSettings.adminWhatsApp,
+          developerFacebook: data.developerFacebook || defaultSettings.developerFacebook,
         });
       } else {
         setSettings(defaultSettings);

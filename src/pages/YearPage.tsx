@@ -15,23 +15,23 @@ export default function YearPage() {
 
   const yearsMetadata: { [key: string]: { title: string; desc: string; accent: string } } = {
     '1st-year': {
-      title: 'First Year Botanical Codices',
-      desc: 'Elementary Botany foundation textbooks including Fungi, Algae, Archegoniatae, and Plant Pathology.',
+      title: '১ম বর্ষ (First Year)',
+      desc: 'উদ্ভিদবিজ্ঞান ১ম বর্ষের সকল একাডেমিক টেক্সট বুক ও স্টাডি রিসোর্স আর্কাইভ।',
       accent: 'border-emerald-500 bg-emerald-500/5',
     },
     '2nd-year': {
-      title: 'Second Year Morphology & Anatomy',
-      desc: 'Intermediate botanical studies on Vascular cryptogams, Microtechnique, Embryology, and Angiosperm Anatomy.',
+      title: '২য় বর্ষ (Second Year)',
+      desc: 'উদ্ভিদবিজ্ঞান ২য় বর্ষের সকল একাডেমিক টেক্সট বুক ও স্টাডি রিসোর্স আর্কাইভ।',
       accent: 'border-teal-500 bg-teal-500/5',
     },
     '3rd-year': {
-      title: 'Third Year Physiology & Genetics',
-      desc: 'Advanced physiological botany covering bio-energetics, metabolic cycles, genetics, and molecular histology.',
+      title: '৩য় বর্ষ (Third Year)',
+      desc: 'উদ্ভিদবিজ্ঞান ৩য় বর্ষের সকল একাডেমিক টেক্সট বুক ও স্টাডি রিসোর্স আর্কাইভ।',
       accent: 'border-cyan-500 bg-cyan-500/5',
     },
     '4th-year': {
-      title: 'Fourth Year Phytogeography & Conservation',
-      desc: 'Advanced research courses, botanical nomenclature taxonomy, agronomy, and environmental conservation.',
+      title: '৪র্থ বর্ষ (Fourth Year)',
+      desc: 'উদ্ভিদবিজ্ঞান ৪র্থ বর্ষের সকল একাডেমিক টেক্সট বুক ও স্টাডি রিসোর্স আর্কাইভ।',
       accent: 'border-green-500 bg-green-500/5',
     },
   };
@@ -94,54 +94,98 @@ export default function YearPage() {
               <span className="text-[9px] bg-emerald-950/80 text-emerald-400 border border-emerald-900/30 font-bold px-2.5 py-1 tracking-wider uppercase font-mono rounded-full">Live Sync Active</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {books.map((book) => (
                 <div
                   key={book.id}
                   onClick={() => window.open(book.oneDriveLink, '_blank')}
-                  className="bg-[#102a23]/20 rounded-2xl border border-emerald-400/10 hover:border-emerald-400/30 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group h-full cursor-pointer"
+                  className="bg-gradient-to-br from-[#0c231e] to-[#041210] rounded-3xl border border-emerald-500/10 hover:border-emerald-400/30 overflow-hidden shadow-2xl hover:shadow-[0_20px_45px_rgba(16,185,129,0.15)] hover:-translate-y-1.5 active:translate-y-0.5 transition-all duration-300 flex flex-col justify-between group h-full cursor-pointer relative"
                 >
                   <div className="p-6 flex-1 flex flex-col justify-start">
-                    {/* Cover art/placeholder */}
-                    <div className="bg-[#102a23]/30 border border-emerald-500/10 rounded-xl p-8 mb-5 flex items-center justify-center relative overflow-hidden group-hover:bg-[#102a23]/60 transition-colors">
-                      <div className="absolute right-0 bottom-0 translate-x-3 translate-y-3 opacity-10">
-                        <BookOpen className="h-24 w-24 text-emerald-400" />
+                    {/* Visual 3D Book Display Case */}
+                    <div className="bg-[#030d0b] border border-emerald-950/60 rounded-2xl p-6 mb-6 flex items-center justify-center relative overflow-hidden h-60 group-hover:bg-[#030d0b]/80 transition-colors">
+                      {/* Interactive background vector */}
+                      <div className="absolute right-0 bottom-0 translate-x-5 translate-y-5 opacity-5">
+                        <BookOpen className="h-32 w-32 text-emerald-400" />
                       </div>
-                      <div className="text-center relative z-10">
-                        {book.coverUrl ? (
-                          <img 
-                            src={book.coverUrl} 
-                            alt={book.title} 
-                            referrerPolicy="no-referrer"
-                            className="h-32 w-24 object-cover mx-auto shadow-md rounded-lg transform group-hover:scale-[1.03] transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className="w-20 h-28 mx-auto bg-emerald-950 text-emerald-400 rounded-lg flex flex-col items-center justify-center shadow-md p-3">
-                            <FileText className="h-10 w-10 mb-1" />
-                            <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-emerald-300">BOTANY</span>
+                      
+                      {/* 3D Flex row container */}
+                      <div className="flex items-center justify-center gap-5 sm:gap-6 w-full h-full relative z-10 select-none">
+                        {/* Book Cover Left Side */}
+                        <div className="shrink-0">
+                          {book.coverUrl ? (
+                            <div className="relative group/cover transition-transform duration-300 transform group-hover:scale-110 group-hover:rotate-2 group-hover:-translate-x-1 shadow-[5px_10px_20px_rgba(0,0,0,0.6)] group-hover:shadow-emerald-500/10 rounded-l-[4px] rounded-r-[6px]">
+                              {/* Realistic outer spine and paper edge shadow */}
+                              <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-black/45 z-20 rounded-l-md"></div>
+                              <div className="absolute left-[4px] top-0 bottom-0 w-[1px] bg-white/10 z-20"></div>
+                              {/* Outer page side edge */}
+                              <div className="absolute right-0 top-[2px] bottom-[2px] w-[3px] bg-white/20 z-10 rounded-r-md"></div>
+                              
+                              <img 
+                                src={book.coverUrl} 
+                                alt={book.title} 
+                                referrerPolicy="no-referrer"
+                                className="h-36 w-24 object-cover rounded-l-[4px] rounded-r-[6px]"
+                              />
+                              {/* Soft front crease reflection */}
+                              <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-transparent opacity-40 rounded-l-md pointer-events-none"></div>
+                            </div>
+                          ) : (
+                            <div className="relative w-24 h-36 bg-gradient-to-br from-emerald-900 to-emerald-950 border border-emerald-500/20 text-emerald-400 rounded-l-[4px] rounded-r-[6px] flex flex-col items-center justify-center shadow-[6px_8px_18px_rgba(0,0,0,0.7)] p-3 group-hover:scale-105 group-hover:rotate-2 group-hover:-translate-x-1 transition-transform duration-300">
+                              {/* Fake cover features */}
+                              <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-black/40 rounded-l-md"></div>
+                              <FileText className="h-10 w-10 mb-1 text-emerald-400/80" />
+                              <span className="text-[8px] font-mono font-black uppercase tracking-widest text-emerald-300 text-center leading-tight">BOTANY CODE</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Open Book modern Glass-badge Right Side */}
+                        <div className="flex flex-col items-start gap-2">
+                          <div className="relative transform transition-all duration-300 group-hover:translate-x-1 group-hover:scale-105">
+                            {/* Inner ambient glow background */}
+                            <div className="absolute -inset-1.5 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl blur-md opacity-20 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+                            
+                            {/* 3D Styled Action Container */}
+                            <div className="relative flex items-center gap-2 bg-[#051a15]/95 border border-emerald-500/30 px-3 py-2.5 rounded-xl shadow-lg group-hover:border-emerald-300/60 transition-all">
+                              <BookOpen className="h-4 w-4 text-emerald-400 group-hover:text-emerald-300 animate-bounce" />
+                              <div className="flex flex-col">
+                                <span className="text-[10px] font-black uppercase tracking-wider text-white font-mono leading-none">
+                                  Open Book
+                                </span>
+                                <span className="text-[7px] text-[#34d399] tracking-widest uppercase font-bold mt-0.5 font-mono">
+                                  পড়ুন
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                        )}
-                        <span className="text-[9px] font-bold font-mono text-[#99f6e4] bg-[#041210]/95 border border-emerald-950 px-2.5 py-0.5 mt-4 inline-block uppercase tracking-wider rounded-full">
-                          Academic Text
-                        </span>
+
+                          {/* Subtle active category badge below */}
+                          <span className="text-[7px] font-mono font-bold text-emerald-400/50 uppercase tracking-widest pl-1 mt-1 bg-emerald-950/40 border border-emerald-500/10 px-2 py-0.5 rounded">
+                            PDF SOURCE
+                          </span>
+                        </div>
                       </div>
                     </div>
 
-                    <h3 className="font-serif text-lg text-white line-clamp-2 leading-snug group-hover:text-[#99f6e4] transition-colors">
-                      {book.title}
-                    </h3>
-                  </div>
+                    {/* Book Name Title embedded into a beautiful interactive Button block (centered) */}
+                    <div className="w-full mt-auto block text-center">
+                      <div className="w-full relative py-4 px-3 bg-[#020b09] border border-emerald-500/15 rounded-2xl group-hover:border-emerald-400/40 group-hover:bg-[#051713] transition-all duration-300 overflow-hidden shadow-inner group-hover:shadow-[0_0_20px_rgba(52,211,153,0.15)] flex flex-col items-center justify-center">
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-[1px] bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent group-hover:w-24 transition-all duration-300"></div>
+                        
+                        <span className="block font-serif text-teal-100 group-hover:text-emerald-300 text-xs sm:text-sm font-semibold line-clamp-3 leading-relaxed tracking-wide transition-colors duration-300 transform group-hover:scale-[1.02]">
+                          {book.title}
+                        </span>
 
-                  <div className="px-6 pb-6 pt-2" onClick={(e) => e.stopPropagation()}>
-                    <a
-                      href={book.oneDriveLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="w-full inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold py-3 px-4 rounded-xl transition-all cursor-pointer shadow-lg hover:shadow-emerald-500/10 text-xs uppercase tracking-widest"
-                    >
-                      <BookOpen className="h-4 w-4 text-emerald-950" />
-                      <span>Review Textbook</span>
-                    </a>
+                        {/* Interactive floating indicator dots at the bottom */}
+                        <div className="flex justify-center items-center gap-1.5 mt-3 opacity-45 group-hover:opacity-100 transition-opacity duration-305">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/50 animate-ping"></span>
+                          <span className="text-[8px] font-mono font-bold text-emerald-400 tracking-widest uppercase">
+                            TAP TO LAUNCH
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}

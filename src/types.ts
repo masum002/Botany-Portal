@@ -26,5 +26,12 @@ export interface PortalSettings {
   contactEmail: string;
   contactPhone: string;
   contactAddress: string;
+  developerPhotoUrl: string;
+  developerName: string;
+  developerTitle: string;
+  developerDescription: string;
+  aboutDetailed: string;
+  adminWhatsApp: string;
+  developerFacebook: string;
 }
 

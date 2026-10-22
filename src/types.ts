@@ -35,3 +35,17 @@ export interface PortalSettings {
   developerFacebook: string;
 }
 
+export interface HandNote {
+  id: string;
+  title: string;
+  subject: string; // e.g. "Plant Physiology", "Cytology & Cytogenetics", "Genetics & Molecular Biology", etc.
+  year: '1st-year' | '2nd-year' | '3rd-year' | '4th-year';
+  fileUrl: string; // Google Drive / OneDrive / direct PDF link
+  authorName?: string; // Contributor / Student / Teacher name
+  description?: string;
+  downloadsCount?: number;
+  coverUrl?: string;
+  fileSize?: string;
+  createdAt?: any; // Firestore Timestamp
+}
+

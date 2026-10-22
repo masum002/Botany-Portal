@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { collection, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp, setDoc, query, orderBy } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from '../firebase';
-import { Book, ContactQuery } from '../types';
-import { Shield, LayoutGrid, CheckSquare, PlusCircle, Trash, Loader2, LogOut, ArrowLeft, ShieldAlert, Library, MessageSquareCode, Sparkles, Plus, AlertCircle, Trash2, Settings } from 'lucide-react';
+import { Book, ContactQuery, HandNote } from '../types';
+import { Shield, LayoutGrid, CheckSquare, PlusCircle, Trash, Loader2, LogOut, ArrowLeft, ShieldAlert, Library, MessageSquareCode, Sparkles, Plus, AlertCircle, Trash2, Settings, FileText, Download, ExternalLink } from 'lucide-react';
+import UploadHandNoteModal from '../components/UploadHandNoteModal';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -14,6 +15,11 @@ export default function AdminDashboard() {
   // States for books
   const [books, setBooks] = useState<Book[]>([]);
   const [loadingBooks, setLoadingBooks] = useState(true);
+
+  // States for hand notes
+  const [handNotes, setHandNotes] = useState<HandNote[]>([]);
+  const [loadingHandNotes, setLoadingHandNotes] = useState(true);
+  const [isHandNoteModalOpen, setIsHandNoteModalOpen] = useState(false);
 
   // States for contact queries
   const [queries, setQueries] = useState<ContactQuery[]>([]);
@@ -28,7 +34,7 @@ export default function AdminDashboard() {
   const [formMsgText, setFormMsgText] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Tab switching state
-  const [activeTab, setActiveTab] = useState<'books' | 'queries' | 'settings'>('books');
+  const [activeTab, setActiveTab] = useState<'books' | 'handnotes' | 'queries' | 'settings'>('books');
 
   // Configuration Settings States
   const [appName, setAppName] = useState('Botany Web Portal');
@@ -80,6 +86,26 @@ export default function AdminDashboard() {
     return unsubscribe;
   }, [currentUser]);
 
+  // Fetch all hand notes in real time
+  useEffect(() => {
+    if (!currentUser) return;
+
+    setLoadingHandNotes(true);
+    const q = query(collection(db, 'handnotes'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const allNotes: HandNote[] = [];
+      snapshot.forEach((doc) => {
+        allNotes.push({ id: doc.id, ...doc.data() } as HandNote);
+      });
+      setHandNotes(allNotes);
+      setLoadingHandNotes(false);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'handnotes');
+    });
+
+    return unsubscribe;
+  }, [currentUser]);
+
   // Fetch all contact queries in real time
   useEffect(() => {
     if (!currentUser) return;
@@ -99,6 +125,17 @@ export default function AdminDashboard() {
 
     return unsubscribe;
   }, [currentUser]);
+
+  // Handle deleting a hand note
+  const handleDeleteHandNote = async (noteId: string) => {
+    if (!confirm('Are you absolutely sure you want to remove this hand note?')) return;
+    try {
+      await deleteDoc(doc(db, 'handnotes', noteId));
+    } catch (err) {
+      alert("Failed to delete hand note.");
+      handleFirestoreError(err, OperationType.DELETE, `handnotes/${noteId}`);
+    }
+  };
 
   // Fetch existing portal settings
   useEffect(() => {
@@ -290,28 +327,40 @@ export default function AdminDashboard() {
       </section>
 
       {/* Stats Counter Section */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Total books block */}
-        <div className="bg-[#102a23]/20 border border-emerald-400/10 rounded-2xl p-6 sm:p-8 flex items-center justify-between relative overflow-hidden">
+        <div className="bg-[#102a23]/20 border border-emerald-400/10 rounded-2xl p-6 sm:p-7 flex items-center justify-between relative overflow-hidden">
           <div className="space-y-1 relative z-10">
-            <span className="text-[9px] font-mono tracking-widest font-bold text-emerald-400 uppercase">Textbook Catalogue Size</span>
-            <p className="text-4xl sm:text-5xl font-light text-white font-serif">{books.length}</p>
-            <p className="text-xs text-emerald-100/40 font-light">Total verified books mapped across honours curricula</p>
+            <span className="text-[9px] font-mono tracking-widest font-bold text-emerald-400 uppercase">Textbook Catalogue</span>
+            <p className="text-3xl sm:text-4xl font-light text-white font-serif">{books.length}</p>
+            <p className="text-xs text-emerald-100/40 font-light">Mapped academic books</p>
           </div>
-          <div className="p-4 bg-emerald-950/40 border border-emerald-800/10 rounded-xl">
-            <Library className="h-8 w-8 text-emerald-400" />
+          <div className="p-3.5 bg-emerald-950/40 border border-emerald-800/10 rounded-xl">
+            <Library className="h-7 w-7 text-emerald-400" />
+          </div>
+        </div>
+
+        {/* Total Hand Notes block */}
+        <div className="bg-[#102a23]/20 border border-emerald-400/10 rounded-2xl p-6 sm:p-7 flex items-center justify-between relative overflow-hidden">
+          <div className="space-y-1 relative z-10">
+            <span className="text-[9px] font-mono tracking-widest font-bold text-teal-400 uppercase">Hand Notes Archive</span>
+            <p className="text-3xl sm:text-4xl font-light text-white font-serif">{handNotes.length}</p>
+            <p className="text-xs text-emerald-100/40 font-light">Lecture sheets & suggestions</p>
+          </div>
+          <div className="p-3.5 bg-emerald-950/40 border border-emerald-800/10 rounded-xl">
+            <FileText className="h-7 w-7 text-teal-400" />
           </div>
         </div>
 
         {/* Total queries block */}
-        <div className="bg-[#102a23]/20 border border-emerald-400/10 rounded-2xl p-6 sm:p-8 flex items-center justify-between relative overflow-hidden">
+        <div className="bg-[#102a23]/20 border border-emerald-400/10 rounded-2xl p-6 sm:p-7 flex items-center justify-between relative overflow-hidden">
           <div className="space-y-1 relative z-10">
-            <span className="text-[9px] font-mono tracking-widest font-bold text-emerald-400 uppercase">Incoming Support logs</span>
-            <p className="text-4xl sm:text-5xl font-light text-white font-serif">{queries.length}</p>
-            <p className="text-xs text-emerald-100/40 font-light">Curricula query logs or book requests active</p>
+            <span className="text-[9px] font-mono tracking-widest font-bold text-cyan-400 uppercase">Incoming Support</span>
+            <p className="text-3xl sm:text-4xl font-light text-white font-serif">{queries.length}</p>
+            <p className="text-xs text-emerald-100/40 font-light">Student inquiry tickets</p>
           </div>
-          <div className="p-4 bg-emerald-950/40 border border-emerald-800/10 rounded-xl">
-            <MessageSquareCode className="h-8 w-8 text-emerald-400" />
+          <div className="p-3.5 bg-emerald-950/40 border border-emerald-800/10 rounded-xl">
+            <MessageSquareCode className="h-7 w-7 text-cyan-400" />
           </div>
         </div>
       </section>
@@ -431,6 +480,16 @@ export default function AdminDashboard() {
               Catalog ({books.length})
             </button>
             <button
+              onClick={() => setActiveTab('handnotes')}
+              className={`pb-4 px-1 text-xs uppercase tracking-widest font-bold border-b-2 transition-colors cursor-pointer ${
+                activeTab === 'handnotes' 
+                  ? 'border-emerald-400 text-emerald-400' 
+                  : 'border-transparent text-emerald-100/30 hover:text-white'
+              }`}
+            >
+              Hand Notes ({handNotes.length})
+            </button>
+            <button
               onClick={() => setActiveTab('queries')}
               className={`pb-4 px-1 text-xs uppercase tracking-widest font-bold border-b-2 transition-colors cursor-pointer ${
                 activeTab === 'queries' 
@@ -492,6 +551,94 @@ export default function AdminDashboard() {
                   <AlertCircle className="h-8 w-8 text-emerald-100/20 mx-auto mb-3" />
                   <p className="text-sm font-light text-emerald-100/30">No books cataloged in this network.</p>
                   <p className="text-xs text-emerald-100/20 mt-1 font-light">Use the left cataloger form to add books.</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'handnotes' && (
+            <div className="space-y-4 text-left">
+              <div className="flex items-center justify-between pb-2">
+                <span className="text-xs text-emerald-100/50">
+                  Total Uploaded Hand Notes: <strong className="text-teal-300">{handNotes.length}</strong>
+                </span>
+                <button
+                  onClick={() => setIsHandNoteModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-[#02130e] font-extrabold text-[10px] uppercase tracking-wider px-3.5 py-2 rounded-xl shadow cursor-pointer"
+                >
+                  <Plus className="h-3.5 w-3.5 stroke-[3px]" />
+                  <span>+ Add New Hand Note</span>
+                </button>
+              </div>
+
+              {loadingHandNotes ? (
+                <div className="py-20 flex flex-col items-center justify-center text-emerald-100/30 space-y-3">
+                  <Loader2 className="h-8 w-8 animate-spin text-teal-400" />
+                  <span className="text-[10px] font-mono tracking-widest uppercase">Syncing Hand Notes...</span>
+                </div>
+              ) : handNotes.length > 0 ? (
+                <div className="space-y-4 max-h-[700px] overflow-y-auto pr-2 scrollbar-none">
+                  {handNotes.map((note) => (
+                    <div
+                      key={note.id}
+                      className="bg-[#102a23]/15 border border-emerald-400/15 p-4 rounded-xl flex items-center justify-between gap-4 group hover:border-emerald-400/30 transition-all text-left"
+                    >
+                      <div className="truncate flex-1 min-w-0 space-y-1">
+                        <strong className="text-white text-sm font-serif font-normal tracking-tight truncate block group-hover:text-teal-200 transition-colors">
+                          {note.title}
+                        </strong>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[9px] font-mono font-bold bg-[#041210] border border-teal-500/20 text-teal-300 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                            {note.year.replace('-', ' ')}
+                          </span>
+                          {note.subject && (
+                            <span className="text-[9px] text-emerald-400/90 font-mono truncate max-w-[200px]">
+                              {note.subject}
+                            </span>
+                          )}
+                          <span className="text-[9px] text-emerald-100/40 font-mono">
+                            • {note.downloadsCount || 0} downloads
+                          </span>
+                          {note.authorName && (
+                            <span className="text-[9px] text-emerald-100/40 font-mono">
+                              • By: {note.authorName}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <a
+                          href={note.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2.5 bg-emerald-950/40 hover:bg-emerald-900 border border-emerald-500/20 rounded-lg text-emerald-300 hover:text-white transition-all"
+                          title="Open Link"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                        <button
+                          onClick={() => handleDeleteHandNote(note.id)}
+                          className="p-2.5 bg-rose-950/20 hover:bg-rose-950 border border-rose-500/15 rounded-lg text-rose-400 hover:text-rose-200 transition-all cursor-pointer"
+                          title="Delete this hand note"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-20 bg-[#102a23]/10 border border-dashed border-emerald-400/10 rounded-2xl space-y-3">
+                  <FileText className="h-8 w-8 text-emerald-100/20 mx-auto" />
+                  <p className="text-sm font-light text-emerald-100/40">No hand notes uploaded yet.</p>
+                  <button
+                    onClick={() => setIsHandNoteModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 bg-emerald-500 text-slate-950 font-bold text-xs px-4 py-2 rounded-xl"
+                  >
+                    <Plus className="h-3.5 w-3.5 stroke-[3px]" />
+                    <span>Upload First Hand Note</span>
+                  </button>
                 </div>
               )}
             </div>
@@ -774,6 +921,13 @@ export default function AdminDashboard() {
         </div>
 
       </section>
+
+      {/* Upload Hand Note Modal for Admin */}
+      <UploadHandNoteModal
+        isOpen={isHandNoteModalOpen}
+        onClose={() => setIsHandNoteModalOpen(false)}
+        defaultYear="3rd-year"
+      />
     </div>
   );
 }

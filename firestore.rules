@@ -22,6 +22,23 @@ service cloud.firestore {
              data.oneDriveLink is string && data.oneDriveLink.size() > 10 && data.oneDriveLink.size() <= 2048;
     }
 
+    // Hand Notes Collection Rules (Honors Notes & Lecture Sheets)
+    match /handnotes/{noteId} {
+      allow read: if true;
+      allow create: if isValidHandNote(request.resource.data);
+      allow update: if (isAdmin() && isValidHandNote(request.resource.data)) ||
+                       (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['downloadsCount']) &&
+                        request.resource.data.downloadsCount is number);
+      allow delete: if isAdmin();
+    }
+
+    function isValidHandNote(data) {
+      return data.keys().hasAll(['title', 'year', 'fileUrl']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 300 &&
+             data.year is string && (data.year == '1st-year' || data.year == '2nd-year' || data.year == '3rd-year' || data.year == '4th-year') &&
+             data.fileUrl is string && data.fileUrl.size() >= 5 && data.fileUrl.size() <= 2048;
+    }
+
     // Queries Collection Rules
     match /queries/{queryId} {
       allow read, delete: if isAdmin();

@@ -26,7 +26,8 @@ export default function Home() {
     {
       id: '3rd-year',
       title: '৩য় বর্ষ (Third Year)',
-      badge: 'Volume III',
+      badge: 'Volume III • স্পেশাল হ্যান্ডনোট',
+      specialTag: 'হ্যান্ডনোট ও বই',
       accentColor: 'hover:border-cyan-400',
       activeShadow: 'active:shadow-[0_2px_0_0_#0891b2] shadow-[0_8px_0_0_#0e7490]',
       glow: 'group-hover:bg-cyan-500/10',
@@ -83,9 +84,16 @@ export default function Home() {
                     <GraduationCap className="h-5 w-5" />
                   </div>
                   <div>
-                    <span className="text-[8px] font-mono font-bold text-[#a7f3d0] tracking-wider block mb-0.5 opacity-60">
-                      {year.badge}
-                    </span>
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-[8px] font-mono font-bold text-[#a7f3d0] tracking-wider block opacity-70">
+                        {year.badge}
+                      </span>
+                      {year.specialTag && (
+                        <span className="text-[7.5px] bg-gradient-to-r from-teal-400 to-emerald-400 text-slate-950 font-mono font-extrabold uppercase px-2 py-0.5 rounded-full shadow-sm">
+                          {year.specialTag}
+                        </span>
+                      )}
+                    </div>
                     <h3 className="text-base sm:text-lg font-serif text-white font-semibold transition-colors duration-200 group-hover:text-emerald-300 select-text">
                       {year.title}
                     </h3>

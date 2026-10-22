@@ -25,6 +25,25 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["name", "email", "message"]
+    },
+    "handNote": {
+      "title": "Hand Note",
+      "description": "Student or instructor handwritten notes, lecture sheets, and exam suggestion files",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "subject": { "type": "string" },
+        "year": { "type": "string", "enum": ["1st-year", "2nd-year", "3rd-year", "4th-year"] },
+        "fileUrl": { "type": "string" },
+        "authorName": { "type": "string" },
+        "description": { "type": "string" },
+        "downloadsCount": { "type": "number" },
+        "coverUrl": { "type": "string" },
+        "fileSize": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "year", "fileUrl"]
     }
   },
   "firestore": {
@@ -35,6 +54,10 @@
     "/queries/{queryId}": {
       "schema": "contactQuery",
       "description": "Collection of incoming support or inquiry queries from students or visitors"
+    },
+    "/handnotes/{noteId}": {
+      "schema": "handNote",
+      "description": "Collection of handwritten notes and lecture sheets downloadable by students"
     }
   }
 }

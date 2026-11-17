@@ -2,7 +2,9 @@ import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-d
 import Header from './components/Header';
 import Footer from './components/Footer';
 import FallingLeaves from './components/FallingLeaves';
-import { SettingsProvider } from './components/SettingsContext';
+import { SettingsProvider, useSettings } from './components/SettingsContext';
+import SiteClosedScreen from './components/SiteClosedScreen';
+import { Loader2 } from 'lucide-react';
 
 // Pages import
 import Home from './pages/Home';
@@ -15,11 +17,24 @@ import AdminDashboard from './pages/AdminDashboard';
 
 function LayoutWrapper() {
   const location = useLocation();
+  const { settings, loading } = useSettings();
   
   // Hide standard public header/footer in full focus book viewing mode,
   // or inside the admin panels to increase focus and workspace real-estate.
   const isReaderView = location.pathname.startsWith('/view');
   const isAdminZone = location.pathname.startsWith('/admin-dashboard') || location.pathname.startsWith('/admin-login');
+
+  if (!isAdminZone && loading) {
+    return (
+      <div className="min-h-screen bg-[#020a08] text-[#e5e7eb] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-emerald-400 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAdminZone && settings.isSiteClosed) {
+    return <SiteClosedScreen />;
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-[#020a08] text-[#e5e7eb] font-sans antialiased relative overflow-hidden">

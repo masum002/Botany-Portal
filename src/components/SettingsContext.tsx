@@ -17,6 +17,8 @@ const defaultSettings: PortalSettings = {
   aboutDetailed: 'Prof. Mahfujur Rahman is a visionary botany academician and systems engineer. Combining rigorous academic botanical standards with modern cloud-enabled architectures, this portal eliminates barriers to literature. Key plant phylum classifications, cytogenetic manuals, plant tissue culture logs, and environmental research are cataloged in real-time for immediate download.',
   adminWhatsApp: '+880 1700-000000',
   developerFacebook: 'https://facebook.com',
+  isSiteClosed: false,
+  siteClosedMessage: 'এডমিন এই ওয়েবসাইটটি আপাতত বন্ধ রেখেছে।',
 };
 
 const SettingsContext = createContext<{ settings: PortalSettings; loading: boolean }>({
@@ -48,6 +50,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           aboutDetailed: data.aboutDetailed || defaultSettings.aboutDetailed,
           adminWhatsApp: data.adminWhatsApp || defaultSettings.adminWhatsApp,
           developerFacebook: data.developerFacebook || defaultSettings.developerFacebook,
+          isSiteClosed: Boolean(data.isSiteClosed),
+          siteClosedMessage: data.siteClosedMessage || defaultSettings.siteClosedMessage,
         });
       } else {
         setSettings(defaultSettings);

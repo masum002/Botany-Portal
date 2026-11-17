@@ -33,6 +33,8 @@ export interface PortalSettings {
   aboutDetailed: string;
   adminWhatsApp: string;
   developerFacebook: string;
+  isSiteClosed?: boolean;
+  siteClosedMessage?: string;
 }
 
 export interface HandNote {

@@ -4,7 +4,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { collection, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp, setDoc, query, orderBy } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from '../firebase';
 import { Book, ContactQuery, HandNote } from '../types';
-import { Shield, LayoutGrid, CheckSquare, PlusCircle, Trash, Loader2, LogOut, ArrowLeft, ShieldAlert, Library, MessageSquareCode, Sparkles, Plus, AlertCircle, Trash2, Settings, FileText, Download, ExternalLink } from 'lucide-react';
+import { Shield, LayoutGrid, CheckSquare, PlusCircle, Trash, Loader2, LogOut, ArrowLeft, ShieldAlert, Library, MessageSquareCode, Sparkles, Plus, AlertCircle, Trash2, Settings, FileText, Download, ExternalLink, Power, Lock, Unlock } from 'lucide-react';
 import UploadHandNoteModal from '../components/UploadHandNoteModal';
 
 export default function AdminDashboard() {
@@ -50,6 +50,9 @@ export default function AdminDashboard() {
   const [aboutDetailed, setAboutDetailed] = useState('');
   const [adminWhatsApp, setAdminWhatsApp] = useState('');
   const [developerFacebook, setDeveloperFacebook] = useState('');
+  const [isSiteClosed, setIsSiteClosed] = useState(false);
+  const [siteClosedMessage, setSiteClosedMessage] = useState('এডমিন এই ওয়েবসাইটটি আপাতত বন্ধ রেখেছে।');
+  const [togglingSite, setTogglingSite] = useState(false);
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsMsg, setSettingsMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -157,6 +160,8 @@ export default function AdminDashboard() {
         setAboutDetailed(data.aboutDetailed || 'Prof. Mahfujur Rahman is a visionary botany academician and systems engineer. Combining rigorous academic botanical standards with modern cloud-enabled architectures, this portal eliminates barriers to literature. Key plant phylum classifications, cytogenetic manuals, plant tissue culture logs, and environmental research are cataloged in real-time for immediate download.');
         setAdminWhatsApp(data.adminWhatsApp || '+880 1700-000000');
         setDeveloperFacebook(data.developerFacebook || 'https://facebook.com');
+        setIsSiteClosed(Boolean(data.isSiteClosed));
+        setSiteClosedMessage(data.siteClosedMessage || 'এডমিন এই ওয়েবসাইটটি আপাতত বন্ধ রেখেছে।');
       }
     });
     return unsubscribe;
@@ -209,6 +214,28 @@ export default function AdminDashboard() {
     }
   };
 
+  // 1-Click Toggle Website Live/Closed Status
+  const handleToggleSiteStatus = async () => {
+    setTogglingSite(true);
+    const nextClosedState = !isSiteClosed;
+    try {
+      await setDoc(
+        doc(db, 'settings', 'general'),
+        {
+          isSiteClosed: nextClosedState,
+          siteClosedMessage: siteClosedMessage.trim() || 'এডমিন এই ওয়েবসাইটটি আপাতত বন্ধ রেখেছে।',
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+    } catch (err: any) {
+      console.error(err);
+      handleFirestoreError(err, OperationType.WRITE, 'settings/general');
+    } finally {
+      setTogglingSite(false);
+    }
+  };
+
   // Save Settings back to Firestore
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,26 +243,33 @@ export default function AdminDashboard() {
     setSettingsMsg(null);
 
     try {
-      await setDoc(doc(db, 'settings', 'general'), {
-        appName: appName.trim(),
-        aboutText: aboutText.trim(),
-        contactText: contactText.trim(),
-        contactEmail: contactEmail.trim(),
-        contactPhone: contactPhone.trim(),
-        contactAddress: contactAddress.trim(),
-        developerPhotoUrl: developerPhotoUrl.trim(),
-        developerName: developerName.trim(),
-        developerTitle: developerTitle.trim(),
-        developerDescription: developerDescription.trim(),
-        aboutDetailed: aboutDetailed.trim(),
-        adminWhatsApp: adminWhatsApp.trim(),
-        developerFacebook: developerFacebook.trim(),
-        updatedAt: serverTimestamp(),
-      });
+      await setDoc(
+        doc(db, 'settings', 'general'),
+        {
+          appName: appName.trim(),
+          aboutText: aboutText.trim(),
+          contactText: contactText.trim(),
+          contactEmail: contactEmail.trim(),
+          contactPhone: contactPhone.trim(),
+          contactAddress: contactAddress.trim(),
+          developerPhotoUrl: developerPhotoUrl.trim(),
+          developerName: developerName.trim(),
+          developerTitle: developerTitle.trim(),
+          developerDescription: developerDescription.trim(),
+          aboutDetailed: aboutDetailed.trim(),
+          adminWhatsApp: adminWhatsApp.trim(),
+          developerFacebook: developerFacebook.trim(),
+          isSiteClosed,
+          siteClosedMessage: siteClosedMessage.trim() || 'এডমিন এই ওয়েবসাইটটি আপাতত বন্ধ রেখেছে।',
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
       setSettingsMsg({ type: 'success', text: 'Portal settings synchronized successfully!' });
     } catch (err: any) {
       console.error(err);
       setSettingsMsg({ type: 'error', text: `Failed to save dynamic configuration: ${err.message}` });
+      handleFirestoreError(err, OperationType.WRITE, 'settings/general');
     } finally {
       setSettingsLoading(false);
     }
@@ -326,8 +360,99 @@ export default function AdminDashboard() {
         </div>
       </section>
 
+      {/* 1-Click Website Power / Maintenance Lock Control */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <div
+          className={`rounded-2xl border p-5 sm:p-6 transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-5 ${
+            isSiteClosed
+              ? 'bg-rose-950/30 border-rose-500/40 shadow-[0_0_30px_rgba(244,63,94,0.15)]'
+              : 'bg-[#102a23]/25 border-emerald-500/20'
+          }`}
+        >
+          <div className="flex items-start gap-4 flex-1">
+            <div
+              className={`p-3 rounded-xl border shrink-0 ${
+                isSiteClosed
+                  ? 'bg-rose-500/15 border-rose-500/30 text-rose-400 animate-pulse'
+                  : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
+              }`}
+            >
+              {isSiteClosed ? <Lock className="h-6 w-6" /> : <Unlock className="h-6 w-6" />}
+            </div>
+
+            <div className="space-y-2 flex-1 min-w-0">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h2 className="font-serif text-lg sm:text-xl text-white font-normal">
+                  ওয়েবসাইট কন্ট্রোল (Site Access Switch)
+                </h2>
+                <span
+                  className={`text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
+                    isSiteClosed
+                      ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+                      : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                  }`}
+                >
+                  {isSiteClosed ? '● ওয়েবসাইট বন্ধ আছে' : '● ওয়েবসাইট চালু আছে'}
+                </span>
+              </div>
+
+              <p className="text-xs text-emerald-100/60 font-light">
+                {isSiteClosed
+                  ? 'বর্তমানে ভিজিটররা ওয়েবসাইটের কোনো পেইজ দেখতে পাচ্ছে না — শুধুমাত্র নিচের নোটিশটি দেখা যাচ্ছে।'
+                  : 'এক ক্লিকে পুরো ওয়েবসাইট সাময়িকভাবে বন্ধ করতে পারবেন (এডমিন প্যানেল ব্যতীত)।'}
+              </p>
+
+              <div className="pt-1 max-w-xl">
+                <label
+                  htmlFor="site-closed-msg"
+                  className="text-[9px] font-mono font-bold uppercase tracking-widest text-emerald-400/80 block mb-1"
+                >
+                  বন্ধ থাকলে ভিজিটরদের যে লেখা দেখাবে:
+                </label>
+                <input
+                  id="site-closed-msg"
+                  type="text"
+                  value={siteClosedMessage}
+                  onChange={(e) => setSiteClosedMessage(e.target.value)}
+                  placeholder="এডমিন এই ওয়েবসাইটটি আপাতত বন্ধ রেখেছে।"
+                  className="w-full bg-[#041210]/80 border border-emerald-400/15 focus:border-emerald-400/40 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleToggleSiteStatus}
+            disabled={togglingSite}
+            className={`inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shrink-0 shadow-lg ${
+              isSiteClosed
+                ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-emerald-500/20'
+                : 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-600/20'
+            }`}
+          >
+            {togglingSite ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>আপডেট হচ্ছে...</span>
+              </>
+            ) : isSiteClosed ? (
+              <>
+                <Power className="h-4 w-4 stroke-[2.5]" />
+                <span>ওয়েবসাইট চালু করুন</span>
+              </>
+            ) : (
+              <>
+                <Power className="h-4 w-4 stroke-[2.5]" />
+                <span>এক ক্লিকে ওয়েবসাইট বন্ধ করুন</span>
+              </>
+            )}
+          </button>
+        </div>
+      </section>
+
       {/* Stats Counter Section */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Total books block */}
         <div className="bg-[#102a23]/20 border border-emerald-400/10 rounded-2xl p-6 sm:p-7 flex items-center justify-between relative overflow-hidden">
           <div className="space-y-1 relative z-10">
